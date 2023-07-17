@@ -19,17 +19,18 @@ export default class Modal extends Component {
         window.removeEventListener('keydown', this.handleKeyDown);
     }
     render() {
-        const { tag, largeImageURL } = this.props;
+        const { tags, largeImageURL } = this.props;
         return (
-            <div className="Overlay">
+            <div className="Overlay" onClick={this.handleOverlayClick}>
                 <div className="Modal">
-                    <img src={largeImageURL} alt={tag}/>
+                    <img src={largeImageURL} alt={tags}/>
                 </div>
             </div>
         );
     }
 }
 Modal.propTypes = {
+    tags: PropTypes.string.isRequired,
     largeImageURL: PropTypes.string.isRequired,
     onCloseModal: PropTypes.func.isRequired
 }

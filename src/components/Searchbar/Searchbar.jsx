@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { ReactComponent as SearchIcon } from '../icons/search.svg'
+import { ReactComponent as SearchIcon } from '../../icons/search.svg'
 
 
 export default class Searchbar extends Component {

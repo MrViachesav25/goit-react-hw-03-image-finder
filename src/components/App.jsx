@@ -6,7 +6,7 @@ import Loader from './Loader';
 import ImageGallery from './ImageGallery';
 import Button from './Button';
 
-import { getImages, perPage } from './Service/getImages';
+import { getImages, perPage } from 'service/take_images';
 export default class App extends Component {
   state = {
     searchValue: '',
@@ -16,10 +16,10 @@ export default class App extends Component {
     totalPages: 0,
     isLoading: false,
     error: null,
+    theEnd: false,
   }
 
   handleSubmit = query => {
-    console.log(query);
     if(this.state.searchValue !== query) {
       this.setState({ 
         searchValue: query, 
@@ -55,15 +55,17 @@ export default class App extends Component {
           position: toast.POSITION.TOP_LEFT
         });
       }
-      if(!data.data.hits.length || data.data.hits.length < 12);
+      let theEnd = false;
+      if(!data.data.hits.length || data.data.hits.length < 12) theEnd = true;
       
       const photos = this.destructData(data.data.hits);
       this.setState(prevState => ({
         images: [...prevState.images, ...photos],
         totalHits: data.data.totalHits,
-        totalPages: Math.trunc(data.totalHits / perPage),
+        totalPages: Math.ceil(data.totalHits / perPage),
         isLoading: false,
         error: null,
+        theEnd: theEnd,
       }));
     } catch (error) {
       console.log(error);
@@ -74,13 +76,13 @@ export default class App extends Component {
 
   componentDidUpdate(prevProps, prevState) {
     const { searchValue, page } = this.state;
-    if (prevState.searchValue !== searchValue || prevState.page !== page) {
+    if (searchValue && (prevState.searchValue !== searchValue || prevState.page !== page)) {
       this.takeImages();
     }
   }
 
   render() {
-    const { searchValue, images, totalHits, isLoading } = this.state;
+    const { searchValue, images, totalHits, isLoading, theEnd} = this.state;
     return (
       <>
         <Searchbar onSubmit={this.handleSubmit}/>
@@ -89,7 +91,7 @@ export default class App extends Component {
           searchValue={searchValue}
           totalHits={totalHits} />}
         {isLoading && <Loader/>}
-       {images.length > 0 && <Button onClick={this.addPage}/>} 
+       {!theEnd && images.length > 0 && <Button onClick={this.addPage}/>} 
         <ToastContainer />
       </>
     )
